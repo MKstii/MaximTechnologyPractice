@@ -26,12 +26,37 @@ namespace MaximPractice.Controllers
             {
                 string res = str.Length % 2 == 0 ?
                 ConvertEvenString(str) : ConvertOddString(str);
-                return Ok(res);
+
+                var cymbolCount = GetSymbolCount(str);
+
+                var answer = new
+                {
+                    result = res,
+                    cymbolCount = cymbolCount
+                };
+                return Ok(answer);
             }
             else
             {
                 return BadRequest($"Invalid symbols: {String.Join(", ", errorChars)}");
             }
+        }
+
+        private Dictionary<char, int> GetSymbolCount(string str)
+        {
+            var res = new Dictionary<char, int>();
+            foreach (var chr in str)
+            {
+                if (res.ContainsKey(chr))
+                {
+                    res[chr] = res[chr] + 1;
+                }
+                else
+                {
+                    res.Add(chr, 1);
+                }
+            }
+            return res;
         }
 
         private List<char> GetInvalidChars(string str, string alphabet)
