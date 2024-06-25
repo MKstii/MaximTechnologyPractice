@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MaximPractice.Controllers
 {
@@ -17,9 +19,32 @@ namespace MaximPractice.Controllers
         [HttpGet]
         public IActionResult Ex1(string str)
         {
-            string res = str.Length % 2 == 0 ?
+            var alphabet = "abcdefghijklmnopqrstuvwxyz";
+            var errorChars = GetInvalidChars(str, alphabet);
+
+            if (errorChars.Count == 0)
+            {
+                string res = str.Length % 2 == 0 ?
                 ConvertEvenString(str) : ConvertOddString(str);
-            return Ok(res);
+                return Ok(res);
+            }
+            else
+            {
+                return BadRequest($"Invalid symbols: {String.Join(", ", errorChars)}");
+            }
+        }
+
+        private List<char> GetInvalidChars(string str, string alphabet)
+        {
+            var errorChars = new List<char>();
+            foreach (var chr in str)
+            {
+                if (!alphabet.Contains(chr))
+                {
+                    errorChars.Add(chr);
+                }
+            }
+            return errorChars;
         }
 
         private string ConvertEvenString(string str)
