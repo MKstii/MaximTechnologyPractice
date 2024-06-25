@@ -29,10 +29,14 @@ namespace MaximPractice.Controllers
 
                 var cymbolCount = GetSymbolCount(str);
 
+                var vowelAlphabet = "aeiouy";
+                var longestSubstring = GetLongestSubstring(res, vowelAlphabet);
+
                 var answer = new
                 {
                     result = res,
-                    cymbolCount = cymbolCount
+                    cymbolCount = cymbolCount,
+                    longestSubstring = longestSubstring
                 };
                 return Ok(answer);
             }
@@ -40,6 +44,29 @@ namespace MaximPractice.Controllers
             {
                 return BadRequest($"Invalid symbols: {String.Join(", ", errorChars)}");
             }
+        }
+
+        private string GetLongestSubstring(string str, string alphabet)
+        {
+            string res = "";
+            for (int i = 0; i < str.Length-1; i++)
+            {
+                if (alphabet.Contains(str[i]))
+                {
+                    for (int j = 1; j < str.Length - i+1; j++)
+                    {
+                        var substring = str.Substring(i,j);
+                        if (alphabet.Contains(substring[substring.Length - 1]))
+                        {
+                            if(substring.Length > res.Length)
+                            {
+                                res = substring;
+                            }
+                        }
+                    }
+                }
+            }
+            return res;
         }
 
         private Dictionary<char, int> GetSymbolCount(string str)
