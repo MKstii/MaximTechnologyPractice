@@ -37,12 +37,15 @@ namespace MaximPractice.Controllers
 
                 var sortedString = _exerciseService.SortString(res, sortType);
 
+                var withDeletedRandomSymbol = _exerciseService.DeleteRandomSymbol(res);
+
                 var answer = new
                 {
                     result = res,
                     cymbolCount = cymbolCount,
                     longestSubstring = longestSubstring,
-                    sortedString = sortedString
+                    sortedString = sortedString,
+                    withDeletedRandomSymbol = withDeletedRandomSymbol
                 };
                 return Ok(answer);
             }
