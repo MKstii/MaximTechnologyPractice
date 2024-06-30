@@ -1,9 +1,12 @@
 using MaximPractice.Services;
+using MaximPractice.Models;
 using MaximPractice.src.Sorts;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using MaximPractice.src.Settings;
+using Microsoft.Extensions.Options;
 
 namespace MaximPractice.Controllers
 {
@@ -13,42 +16,39 @@ namespace MaximPractice.Controllers
     {
         private ILogger<Ex1Controller> _logger;
         private ExerciseService _exerciseService;
+        private AppSettings _appSettings;
 
-        public Ex1Controller(ILogger<Ex1Controller> logger)
+        public Ex1Controller(ILogger<Ex1Controller> logger, AppSettings appSettings)
         {
             _logger = logger;
-            _exerciseService = new ExerciseService();
+            _appSettings = appSettings;
+            _exerciseService = new ExerciseService(appSettings);
         }
 
         [HttpGet]
         public IActionResult Ex1(string str, SortType sortType)
         {
-            var alphabet = "abcdefghijklmnopqrstuvwxyz";
-            var errorChars = _exerciseService.GetInvalidChars(str, alphabet);
-
-            if (errorChars.Count == 0)
+            var convertResult = _exerciseService.ConverString(str);
+            if (convertResult.IsSuccesed)
             {
-                string res = _exerciseService.ConverString(str);
+                var response = new ExResponse();
 
-                var cymbolCount = _exerciseService.GetSymbolCount(str);
+                string res = convertResult.Value;
+
+                response.ConvertedString = res;
+                response.SymbolCount = _exerciseService.GetSymbolCount(str);
 
                 var vowelAlphabet = "aeiouy";
-                var longestSubstring = _exerciseService.GetLongestSubstring(res, vowelAlphabet);
+                response.LongestSubstring = _exerciseService.GetLongestSubstring(res, vowelAlphabet);
 
-                var sortedString = _exerciseService.SortString(res, sortType);
+                response.SortedString = _exerciseService.SortString(res, sortType);
+                response.WithRandomDeletedSymbol = _exerciseService.DeleteRandomSymbol(res);
 
-                var answer = new
-                {
-                    result = res,
-                    cymbolCount = cymbolCount,
-                    longestSubstring = longestSubstring,
-                    sortedString = sortedString
-                };
-                return Ok(answer);
+                return Ok(response);
             }
             else
             {
-                return BadRequest($"Invalid symbols: {String.Join(", ", errorChars)}");
+                return BadRequest(convertResult.ErrorText);
             }
         }
     }
