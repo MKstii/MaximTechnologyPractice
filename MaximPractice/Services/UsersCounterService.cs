@@ -1,4 +1,6 @@
-﻿namespace MaximPractice.Services
+﻿using MaximPractice.src.Settings;
+
+namespace MaximPractice.Services
 {
     public class UsersCounterService
     {
@@ -11,11 +13,18 @@
 
         public void AddUserCount()
         {
-            Count++;
+            lock (this)
+            {
+                Count++;
+            }
         }
         public void RemoveUserCount()
         {
-            Count--;
+            lock (this)
+            {
+                Count--;
+            }
+            
         }
     }
 }

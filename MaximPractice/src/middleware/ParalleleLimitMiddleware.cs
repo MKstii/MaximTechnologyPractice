@@ -7,23 +7,25 @@ namespace MaximPractice.src.middleware
     public class ParalleleLimitMiddleware
     {
         private readonly RequestDelegate next;
-        public ParalleleLimitMiddleware(RequestDelegate next)
+        private readonly UsersCounterService usersCounter;
+        public ParalleleLimitMiddleware(RequestDelegate next, UsersCounterService usersCounter)
         {
             this.next = next;
+            this.usersCounter = usersCounter;
         }
 
-        public async Task InvokeAsync(HttpContext context, UsersCounterService usersCounter, AppSettings appSettings)
+        public async Task InvokeAsync(HttpContext context, AppSettings appSettings)
         {
-            if (usersCounter.Count >= appSettings.Settings.ParallelLimit)
+            usersCounter.AddUserCount();
+            if (usersCounter.Count > appSettings.Settings.ParallelLimit)
             {
                 context.Response.StatusCode = 503;
             }
             else
             {
-                usersCounter.AddUserCount();
                 await next.Invoke(context);
-                usersCounter.RemoveUserCount();
             }
+            usersCounter.RemoveUserCount();
         }
     }
 }

@@ -12,11 +12,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Загрузка настроек из файла appsettings.json
 builder.Services.Configure<AppSettings>(builder.Configuration);
 var appSettings = new AppSettings();
 builder.Configuration.Bind(appSettings);
 builder.Services.AddSingleton(appSettings);
 
+// Добавление сервисов
 builder.Services.AddSingleton<UsersCounterService>();
 builder.Services.AddTransient<StringConverterService>();
 builder.Services.AddTransient<ExerciseService>();
