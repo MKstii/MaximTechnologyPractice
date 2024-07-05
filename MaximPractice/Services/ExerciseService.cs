@@ -1,4 +1,5 @@
-﻿using MaximPractice.src.Settings;
+﻿using MaximPractice.Services.StringConverter;
+using MaximPractice.src.Settings;
 using MaximPractice.src.Sorts;
 using MaximPractice.src.Sorts.TreeSort;
 using System.Text;
@@ -8,56 +9,16 @@ namespace MaximPractice.Services
     public class ExerciseService
     {
         private AppSettings _appSettings;
-        public ExerciseService(AppSettings appSetting) 
+        private StringConverterService _stringConverterService;
+        public ExerciseService(AppSettings appSetting, StringConverterService stringConverterService) 
         {
             _appSettings = appSetting;
+            _stringConverterService = stringConverterService;
         } 
-        public StringConvertResult ConverString(string str)
+        public StringConvertResult ConvertString(string str)
         {
-            var stringConverter = new StringConverter(_appSettings);
-            return stringConverter.Convert(str);
+            return _stringConverterService.Convert(str);
         }
-
-        public bool InBlacklist(string str)
-        {
-            return _appSettings.Settings.BlackList.Contains(str);
-        }
-
-        public string ConvertEvenString(string str)
-        {
-            var strBuilder = new StringBuilder();
-
-            var firstHalf = ReverseString(str, 0, (str.Length - 1) / 2);
-            var secondHalf = ReverseString(str, str.Length / 2, str.Length - 1);
-
-            strBuilder.Append(firstHalf);
-            strBuilder.Append(secondHalf);
-
-            return strBuilder.ToString();
-        }
-
-        public string ConvertOddString(string str)
-        {
-            var strBuilder = new StringBuilder();
-
-            var firstHalf = ReverseString(str, 0, str.Length - 1);
-
-            strBuilder.Append(firstHalf);
-            strBuilder.Append(str);
-
-            return strBuilder.ToString();
-        }
-
-        private string ReverseString(string str, int start, int end)
-        {
-            var strBuilder = new StringBuilder();
-            for (int i = end; i >= start; i--)
-            {
-                strBuilder.Append(str[i]);
-            }
-            return strBuilder.ToString();
-        }
-
         public string GetLongestSubstring(string str, string alphabet)
         {
             string res = "";
@@ -80,7 +41,6 @@ namespace MaximPractice.Services
             }
             return res;
         }
-
         public Dictionary<char, int> GetSymbolCount(string str)
         {
             var res = new Dictionary<char, int>();
@@ -97,20 +57,6 @@ namespace MaximPractice.Services
             }
             return res;
         }
-
-        public List<char> GetInvalidChars(string str, string alphabet)
-        {
-            var errorChars = new List<char>();
-            foreach (var chr in str)
-            {
-                if (!alphabet.Contains(chr))
-                {
-                    errorChars.Add(chr);
-                }
-            }
-            return errorChars;
-        }
-
         public string SortString(string str, SortType sortType)
         {
             switch (sortType) 

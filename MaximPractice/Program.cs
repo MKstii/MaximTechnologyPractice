@@ -1,4 +1,6 @@
 using MaximPractice.Services;
+using MaximPractice.Services.StringConverter;
+using MaximPractice.src.middleware;
 using MaximPractice.src.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +17,13 @@ var appSettings = new AppSettings();
 builder.Configuration.Bind(appSettings);
 builder.Services.AddSingleton(appSettings);
 
+builder.Services.AddSingleton<UsersCounterService>();
+builder.Services.AddTransient<StringConverterService>();
+builder.Services.AddTransient<ExerciseService>();
+
 var app = builder.Build();
+
+app.UseMiddleware<ParalleleLimitMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
