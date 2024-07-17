@@ -113,5 +113,37 @@ namespace MaximPractice.Services
                     throw new Exception("Недопустимый тип сортировки");
             }
         }
+
+        public string DeleteRandomSymbol(string str)
+        {
+            var symbolId = GetRandomNumber(str.Length-1).Result;
+
+            var sb = new StringBuilder();
+            sb.Append(str.Substring(0,symbolId));
+            sb.Append(str.Substring(symbolId+1, str.Length - (symbolId+1)));
+
+            return sb.ToString();
+        }
+
+        private async Task<int> GetRandomNumber(int maxNumber)
+        {
+            HttpClient client = new HttpClient();
+            var response = await client.GetAsync($"https://www.randomnumberapi.com/api/v1.0/random?min=0&max={maxNumber}");
+            if (response.IsSuccessStatusCode)
+            {
+                var res = await response.Content.ReadFromJsonAsync<int[]>();
+                return res[0];
+            }
+            else
+            {
+                return GetRandomNumberLocal(maxNumber);
+            }
+        }
+
+        private int GetRandomNumberLocal(int maxNumber)
+        {
+            Random rnd = new Random();
+            return rnd.Next(maxNumber);
+        }
     }
 }
