@@ -1,4 +1,6 @@
 using MaximPractice.Services;
+using MaximPractice.Services.StringConverter;
+using MaximPractice.src.middleware;
 using MaximPractice.src.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,12 +12,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Загрузка настроек из файла appsettings.json
 builder.Services.Configure<AppSettings>(builder.Configuration);
 var appSettings = new AppSettings();
 builder.Configuration.Bind(appSettings);
 builder.Services.AddSingleton(appSettings);
 
+// Добавление сервисов
+builder.Services.AddSingleton<UsersCounterService>();
+builder.Services.AddTransient<StringConverterService>();
+builder.Services.AddTransient<ExerciseService>();
+
 var app = builder.Build();
+
+app.UseMiddleware<ParalleleLimitMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

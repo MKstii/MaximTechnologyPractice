@@ -18,17 +18,17 @@ namespace MaximPractice.Controllers
         private ExerciseService _exerciseService;
         private AppSettings _appSettings;
 
-        public Ex1Controller(ILogger<Ex1Controller> logger, AppSettings appSettings)
+        public Ex1Controller(ILogger<Ex1Controller> logger, AppSettings appSettings, ExerciseService exerciseService)
         {
             _logger = logger;
             _appSettings = appSettings;
-            _exerciseService = new ExerciseService(appSettings);
+            _exerciseService = exerciseService;
         }
 
         [HttpGet]
         public IActionResult Ex1(string str, SortType sortType)
         {
-            var convertResult = _exerciseService.ConverString(str);
+            var convertResult = _exerciseService.ConvertString(str);
             if (convertResult.IsSuccesed)
             {
                 var response = new ExResponse();
