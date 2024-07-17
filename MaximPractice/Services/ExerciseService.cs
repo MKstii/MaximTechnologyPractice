@@ -116,7 +116,7 @@ namespace MaximPractice.Services
 
         public string DeleteRandomSymbol(string str)
         {
-            var symbolId = GetRandomNumber(str.Length-1).Result;
+            var symbolId = GetRandomNumber(str.Length).Result;
 
             var sb = new StringBuilder();
             sb.Append(str.Substring(0,symbolId));

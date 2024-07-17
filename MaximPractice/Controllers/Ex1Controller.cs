@@ -1,4 +1,5 @@
 using MaximPractice.Services;
+using MaximPractice.Models;
 using MaximPractice.src.Sorts;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -28,26 +29,21 @@ namespace MaximPractice.Controllers
 
             if (errorChars.Count == 0)
             {
+                var response = new ExResponse();
+
                 string res = _exerciseService.ConverString(str);
 
-                var cymbolCount = _exerciseService.GetSymbolCount(str);
+                response.ConvertedString = res;
+                response.SymbolCount = _exerciseService.GetSymbolCount(str);
 
                 var vowelAlphabet = "aeiouy";
-                var longestSubstring = _exerciseService.GetLongestSubstring(res, vowelAlphabet);
+                response.LongestSubstring = _exerciseService.GetLongestSubstring(res, vowelAlphabet);
 
-                var sortedString = _exerciseService.SortString(res, sortType);
+                response.SortedString = _exerciseService.SortString(res, sortType);
 
-                var withDeletedRandomSymbol = _exerciseService.DeleteRandomSymbol(res);
+                response.WithRandomDeletedSymbol = _exerciseService.DeleteRandomSymbol(res);
 
-                var answer = new
-                {
-                    result = res,
-                    cymbolCount = cymbolCount,
-                    longestSubstring = longestSubstring,
-                    sortedString = sortedString,
-                    withDeletedRandomSymbol = withDeletedRandomSymbol
-                };
-                return Ok(answer);
+                return Ok(response);
             }
             else
             {
