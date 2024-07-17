@@ -14,14 +14,10 @@ namespace MaximPractice.Controllers
     [Route("[controller]")]
     public class Ex1Controller : ControllerBase
     {
-        private ILogger<Ex1Controller> _logger;
         private ExerciseService _exerciseService;
-        private AppSettings _appSettings;
 
-        public Ex1Controller(ILogger<Ex1Controller> logger, AppSettings appSettings, ExerciseService exerciseService)
+        public Ex1Controller(ExerciseService exerciseService)
         {
-            _logger = logger;
-            _appSettings = appSettings;
             _exerciseService = exerciseService;
         }
 
@@ -36,7 +32,7 @@ namespace MaximPractice.Controllers
                 string res = convertResult.Value;
 
                 response.ConvertedString = res;
-                response.SymbolCount = _exerciseService.GetSymbolCount(str);
+                response.SymbolCount = _exerciseService.GetSymbolCount(res);
 
                 var vowelAlphabet = "aeiouy";
                 response.LongestSubstring = _exerciseService.GetLongestSubstring(res, vowelAlphabet);
