@@ -1,4 +1,5 @@
-﻿using MaximPractice.src.Sorts;
+﻿using MaximPractice.src.Settings;
+using MaximPractice.src.Sorts;
 using MaximPractice.src.Sorts.TreeSort;
 using System.Text;
 
@@ -6,14 +7,23 @@ namespace MaximPractice.Services
 {
     public class ExerciseService
     {
-        public ExerciseService() { } 
-        public string ConverString(string str)
+        private AppSettings _appSettings;
+        public ExerciseService(AppSettings appSetting) 
         {
-            return str.Length % 2 == 0 ?
-                ConvertEvenString(str) : ConvertOddString(str);
+            _appSettings = appSetting;
+        } 
+        public StringConvertResult ConverString(string str)
+        {
+            var stringConverter = new StringConverter(_appSettings);
+            return stringConverter.Convert(str);
         }
 
-        private string ConvertEvenString(string str)
+        public bool InBlacklist(string str)
+        {
+            return _appSettings.Settings.BlackList.Contains(str);
+        }
+
+        public string ConvertEvenString(string str)
         {
             var strBuilder = new StringBuilder();
 
@@ -26,7 +36,7 @@ namespace MaximPractice.Services
             return strBuilder.ToString();
         }
 
-        private string ConvertOddString(string str)
+        public string ConvertOddString(string str)
         {
             var strBuilder = new StringBuilder();
 
@@ -128,7 +138,8 @@ namespace MaximPractice.Services
         private async Task<int> GetRandomNumber(int maxNumber)
         {
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync($"https://www.randomnumberapi.com/api/v1.0/random?min=0&max={maxNumber}");
+            client.BaseAddress = new Uri(_appSettings.RandomApi);
+            var response = await client.GetAsync($"/api/v1.0/random?min=0&max={maxNumber}");
             if (response.IsSuccessStatusCode)
             {
                 var res = await response.Content.ReadFromJsonAsync<int[]>();

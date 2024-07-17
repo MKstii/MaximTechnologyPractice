@@ -7,7 +7,6 @@
         public string? LongestSubstring { get; set; }
         public string? SortedString { get; set; }
         public string? WithRandomDeletedSymbol { get; set; }
-
         public ExResponse() { }
     }
 }
